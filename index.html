@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fire, Ice & Flying Visitors</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#00B4A0; --teal-light:#A8E6DF;
+  --dark:#0D1B2A; --navy:#1B2E45;
+  --white:#FFFFFF; --bg:#FFFFFF;
+  --text:#1A2733; --muted:#5A6E7F; --light-gray:#DDE6ED;
+  --red:#D95F5F; --orange:#E8863A; --purple:#7059C4;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden;}
+#prog{position:fixed;top:0;left:0;height:3px;background:var(--teal);z-index:999;width:0;transition:width .1s;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:.85rem 2.5rem;background:rgba(255,255,255,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--light-gray);}
+.nav-logo{font-family:'Fraunces',serif;font-size:.95rem;color:var(--teal);font-weight:700;}
+nav ul{display:flex;gap:1.6rem;list-style:none;}
+nav ul a{color:var(--muted);text-decoration:none;font-size:.72rem;font-weight:500;letter-spacing:.09em;text-transform:uppercase;transition:color .2s;}
+nav ul a:hover{color:var(--teal);}
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;background:var(--white);}
+.aurora{position:absolute;inset:0;background:radial-gradient(ellipse 90% 50% at 50% 25%,rgba(0,180,160,.08) 0%,transparent 70%),radial-gradient(ellipse 60% 35% at 20% 60%,rgba(0,100,120,.05) 0%,transparent 60%);animation:ashift 9s ease-in-out infinite alternate;}
+@keyframes ashift{0%{opacity:.7;transform:scale(1);}100%{opacity:1;transform:scale(1.04) translateY(-8px);}}
+.stars{display:none;}
+.hero-inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:8rem 2.5rem 4rem;display:grid;grid-template-columns:1fr 200px;gap:3rem;align-items:center;width:100%;}
+.hero-tag{font-size:.72rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem;}
+h1{font-family:'Fraunces',serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:900;line-height:1.0;color:var(--dark);margin-bottom:1.4rem;}
+.hero-sub{font-size:1.05rem;color:var(--muted);font-style:italic;line-height:1.65;max-width:480px;margin-bottom:2rem;}
+.hero-src{font-size:.72rem;color:var(--muted);}
+.stat-box{background:rgba(0,180,160,.06);border:1px solid rgba(0,180,160,.35);border-radius:8px;padding:2rem 1.5rem;text-align:center;}
+.stat-num{font-family:'Fraunces',serif;font-size:4.5rem;font-weight:900;line-height:1;color:var(--dark);}
+.stat-lbl{font-size:.88rem;color:var(--muted);margin-top:.6rem;line-height:1.4;}
+.scroll-cue{position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--muted);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;animation:bob 2.2s ease-in-out infinite;}
+.scroll-cue::after{content:'';width:1px;height:36px;background:linear-gradient(to bottom,var(--teal),transparent);}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(7px);}}
+.wrap{width:100%;}
+.wrap.alt{background:var(--bg);}
+section{max-width:1100px;margin:0 auto;padding:6rem 2.5rem;opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
+section.vis{opacity:1;transform:translateY(0);}
+.stag{font-size:.72rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin-bottom:.65rem;display:flex;align-items:center;gap:.7rem;}
+.stag::before{content:'';width:2rem;height:2px;background:var(--teal);}
+h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:700;line-height:1.12;color:var(--dark);margin-bottom:1rem;}
+.lead{font-size:1.05rem;line-height:1.8;color:var(--muted);max-width:640px;margin-bottom:2.5rem;}
+.chart-wrap{background:var(--white);border:1px solid var(--light-gray);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.07);overflow:hidden;margin-bottom:1.5rem;}
+.alt .chart-wrap{background:var(--white);}
+.finding{padding:1.1rem 1.4rem;border-left:3px solid var(--teal);background:rgba(0,180,160,.06);border-radius:0 8px 8px 0;font-size:.95rem;color:var(--muted);line-height:1.7;}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:1.8rem;}
+.card{background:#FAFBFC;border:1px solid var(--light-gray);border-radius:10px;padding:1.8rem;}
+.card .big{font-family:'Fraunces',serif;font-size:2.8rem;font-weight:900;line-height:1;}
+.card .big.red{color:var(--red);}
+.card .big.green{color:var(--teal);}
+.card p{margin-top:.5rem;color:var(--muted);font-size:.9rem;line-height:1.5;}
+.volc-list{display:flex;flex-direction:column;gap:.9rem;margin-top:1.5rem;}
+.volc{display:grid;grid-template-columns:100px 1fr;gap:1rem;align-items:start;padding:.9rem 0;border-bottom:1px solid var(--light-gray);}
+.volc:last-child{border-bottom:none;}
+.volc-year{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--orange);}
+.volc-body strong{display:block;font-size:.95rem;color:var(--dark);margin-bottom:.25rem;}
+.volc-body span{font-size:.875rem;color:var(--muted);line-height:1.6;}
+#conclusion{min-height:50vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--white);}
+#conclusion section{color:var(--text);}
+.thesis{font-family:'Fraunces',serif;font-size:clamp(1.5rem,3vw,2.5rem);font-weight:700;font-style:italic;line-height:1.35;max-width:800px;margin:1.5rem auto;color:var(--dark);}
+.thesis em{color:var(--teal);font-style:normal;}
+.thesis-lead{font-size:1rem;line-height:1.75;color:var(--muted);max-width:680px;margin:0 auto 2.5rem;}
+.credits{font-size:.78rem;color:var(--muted);}
+.divider{width:3rem;height:3px;background:var(--teal);margin:0 auto 1.5rem;}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<nav>
+  <div class="nav-logo">Fire, Ice & Flying Visitors</div>
+  <ul>
+    <li><a href="#growth">Growth</a></li>
+    <li><a href="#disruption">Disruption</a></li>
+    <li><a href="#seasonality">Seasonality</a></li>
+    <li><a href="#origins">Origins</a></li>
+    <li><a href="#isk">ISK</a></li>
+    <li><a href="#volcano">Volcanoes</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="aurora"></div><div class="stars"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">Social Data & Visualization · 02806 · DTU</div>
+      <h1>Fire, Ice &<br>Flying Visitors</h1>
+      <p class="hero-sub">How Iceland became one of the world's fastest-growing tourist destinations — and what's really driving it.</p>
+      <p class="hero-src">Sources: Icelandic Tourist Board · Central Bank of Iceland · Google Trends · 2002–2026</p>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">9×</div>
+      <div class="stat-lbl">more tourists<br>in 2018 vs 2002</div>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</div>
+
+<!-- 01 GROWTH -->
+<div class="wrap">
+<section id="growth">
+  <div class="stag">01 — The Growth Story</div>
+  <h2>From 250,000 to 2.3 million<br>in sixteen years</h2>
+  <p class="lead">For most of the 2000s, Iceland was a niche destination. Then something shifted around 2011 — and visitor numbers compounded at 20–25% per year, making Iceland one of the fastest-growing tourism markets in the world.</p>
+  <div class="chart-wrap"><div id="cGrowth"></div></div>
+  <div class="finding">📈 Growth was essentially flat from 2002–2010, then accelerated sharply. The 2018 peak of 2.3M visitors represents a <strong>9× increase</strong> from 2002 — an extraordinary trajectory for a country of just 370,000 people.</div>
+</section>
+</div>
+
+<!-- 02 DISRUPTION -->
+<div class="wrap alt">
+<section id="disruption">
+  <div class="stag">02 — Disruption</div>
+  <h2>Then COVID hit —<br>and everything collapsed</h2>
+  <p class="lead">In 2020, international travel froze almost overnight. Iceland's visitor numbers dropped 79% in a single year — exposing just how fragile a tourism-dependent economy can be when the world stops moving.</p>
+  <div class="chart-wrap"><div id="cDisruption"></div></div>
+  <div class="cards">
+    <div class="card"><div class="big red">−79%</div><p>Visitors in 2020 vs 2019. The sharpest single-year collapse in the entire dataset.</p></div>
+    <div class="card"><div class="big green">+252%</div><p>Recovery by 2022. Iceland bounced back faster than most destinations globally, surpassing pre-COVID levels by 2023.</p></div>
+  </div>
+</section>
+</div>
+
+<!-- 03 SEASONALITY -->
+<div class="wrap">
+<section id="seasonality">
+  <div class="stag">03 — Seasonality</div>
+  <h2>Iceland says year-round.<br>The data says summer.</h2>
+  <p class="lead">July and August alone account for nearly 30% of all annual visitors. Despite heavy marketing of winter tourism — northern lights, Christmas markets — the seasonal gap remains stark year after year. Press play to watch how the pattern evolved from 2002 to 2025.</p>
+  <div class="chart-wrap"><div id="cSeason"></div></div>
+  <div class="finding">❄️ The summer dominance has barely shifted over 20+ years. Winter months have grown in absolute numbers, but their <strong>share</strong> of annual visitors remains almost unchanged — Iceland is not yet a true year-round destination despite the marketing.</div>
+</section>
+</div>
+
+<!-- 04 ORIGINS -->
+<div class="wrap alt">
+<section id="origins">
+  <div class="stag">04 — Where They Come From</div>
+  <h2>A surprisingly concentrated<br>visitor base</h2>
+  <p class="lead">The USA alone sent nearly 700,000 tourists in peak year 2018 — more than the next two countries combined. But the USA's dominance is gradually declining as Iceland diversifies its visitor base. Poland, Spain, and France have all grown faster proportionally since 2012.</p>
+  <div class="chart-wrap"><div id="cOrigins"></div></div>
+  <div class="finding">🌍 The USA's share of total visitors peaked around 2008–2010 and has been declining steadily since. Iceland is becoming less dependent on a single market — but the top 3 countries still account for over 50% of all visitors.</div>
+</section>
+</div>
+
+<!-- 05 ISK -->
+<div class="wrap">
+<section id="isk">
+  <div class="stag">05 — The Icelandic Króna</div>
+  <h2>Did a weak currency<br>fuel the boom?</h2>
+  <p class="lead">The ISK collapsed after the 2008 financial crisis, making Iceland dramatically cheaper for foreign visitors. As the króna weakened, tourist numbers climbed. When it strengthened again post-2016, growth slowed — suggesting currency played a real role.</p>
+  <div class="chart-wrap"><div id="cISK"></div></div>
+  <div class="finding">💱 The inverse relationship is striking: as the ISK weakened after 2008, tourism took off from 2011. As the króna recovered post-2016, visitor growth plateaued. Correlation is not causation — airline expansion and social media also played roles — but the timing is hard to ignore.</div>
+</section>
+</div>
+
+<!-- 06 VOLCANO -->
+<div class="wrap alt">
+<section id="volcano">
+  <div class="stag">06 — Volcanoes & Global Interest</div>
+  <h2>Disaster as a<br>marketing tool?</h2>
+  <p class="lead">Google search interest for "flights to iceland" spikes around every major volcanic eruption. The 2010 Eyjafjallajökull eruption hit a perfect score of 100 in Google Trends — and the tourism boom followed exactly one year later. Click any button to zoom into that eruption window.</p>
+  <div class="chart-wrap"><div id="cVolcano"></div></div>
+  <div class="volc-list">
+    <div class="volc"><div class="volc-year">2010</div><div class="volc-body"><strong>Eyjafjallajökull ★</strong><span>April eruption grounded 100,000+ flights across Europe. Google search interest hit 100 — the all-time peak. Tourism began accelerating the following year, suggesting a ~12-month lag between viral moment and actual bookings.</span></div></div>
+    <div class="volc"><div class="volc-year">2014–15</div><div class="volc-body"><strong>Holuhraun / Bárðarbunga</strong><span>Largest eruption in Iceland in 200 years. No flight disruption — search bump was smaller, consistent with the idea that disruption drives awareness more than eruption size alone.</span></div></div>
+    <div class="volc"><div class="volc-year">2021–23</div><div class="volc-body"><strong>Fagradalsfjall series</strong><span>Unusually accessible eruptions near Reykjavik. Viral content and "volcano tourism" packages drove sustained search interest during Iceland's post-COVID recovery.</span></div></div>
+    <div class="volc"><div class="volc-year">2024–25</div><div class="volc-body"><strong>Svartsengi / Grindavík ★</strong><span>Multiple eruptions threatening the Blue Lagoon and Grindavík town. International media drives the highest sustained search interest since 2010 — and visitor numbers remain at record levels.</span></div></div>
+  </div>
+</section>
+</div>
+
+<!-- CONCLUSION -->
+<div id="conclusion">
+<section>
+  <div class="stag" style="justify-content:center;color:var(--teal);">07 — Conclusion</div>
+  <div class="divider"></div>
+  <p class="thesis">So what actually happened?</p>
+  <p class="thesis-lead">Pulling these threads together, no single factor explains the boom on its own. The weak króna after 2008 made Iceland affordable right as Eyjafjallajökull put it on every news channel in the world. Cheap flights and Instagram did the rest. What surprised us most wasn't the growth itself — it was how little the seasonal pattern has shifted, and how much of the visitor base still comes from a handful of countries. Whether the current numbers are sustainable is a fair question, but that's beyond what this dataset can answer.</p>
+  <div class="credits">Eyjólfur · Gunnlaugur · Ívar &nbsp;·&nbsp; Social Data & Visualization 02806 &nbsp;·&nbsp; DTU &nbsp;·&nbsp; 2025</div>
+</section>
+</div>
+
+<script>
+const ANNUAL_YEARS    = [2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const ANNUAL_VISITORS = [248580, 308768, 348533, 361187, 398901, 458999, 472672, 464536, 459252, 540824, 646921, 781016, 969181, 1261938, 1767726, 2195271, 2315925, 1986153, 482108, 687691, 1696785, 2211668, 2261391, 2267638];
+const TOP_COUNTRIES   = ["USA", "UK", "Germany", "China", "Canada", "France", "Poland", "Spain", "Denmark", "Sweden"];
+const TOP_VISITORS    = [694814, 297963, 139155, 105040, 99715, 97224, 91463, 65589, 51019, 49316];
+const CS_YEARS        = [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const CS_USA          = [15.1, 14.0, 11.3, 8.6, 9.5, 11.1, 14.3, 14.7, 15.3, 15.7, 19.2, 23.5, 26.3, 30.0, 23.4, 10.6, 33.0, 27.0, 29.0, 27.4, 29.2];
+const CS_UK           = [16.2, 16.9, 16.0, 14.8, 13.3, 13.1, 12.5, 14.6, 17.6, 18.6, 19.1, 17.9, 14.7, 12.9, 13.2, 20.8, 7.9, 13.5, 12.9, 11.8, 10.1];
+const CS_DE           = [10.4, 9.6, 8.8, 9.5, 11.2, 11.8, 10.5, 10.1, 9.7, 8.9, 8.2, 7.5, 7.1, 6.0, 6.7, 9.2, 9.3, 7.8, 6.3, 6.3, 6.7];
+const ISK_YEARS       = [2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const ISK_VALS        = [124.0, 118.4, 120.4, 109.3, 128.6, 113.4, 159.4, 229.5, 213.5, 220.5, 220.9, 216.8, 206.5, 204.8, 186.7, 151.3, 163.6, 185.1, 198.9, 191.1, 184.8, 195.2, 195.7, 184.6];
+const GT_DATES        = ["2004-01-01", "2004-02-01", "2004-03-01", "2004-04-01", "2004-05-01", "2004-06-01", "2004-07-01", "2004-08-01", "2004-09-01", "2004-10-01", "2004-11-01", "2004-12-01", "2005-01-01", "2005-02-01", "2005-03-01", "2005-04-01", "2005-05-01", "2005-06-01", "2005-07-01", "2005-08-01", "2005-09-01", "2005-10-01", "2005-11-01", "2005-12-01", "2006-01-01", "2006-02-01", "2006-03-01", "2006-04-01", "2006-05-01", "2006-06-01", "2006-07-01", "2006-08-01", "2006-09-01", "2006-10-01", "2006-11-01", "2006-12-01", "2007-01-01", "2007-02-01", "2007-03-01", "2007-04-01", "2007-05-01", "2007-06-01", "2007-07-01", "2007-08-01", "2007-09-01", "2007-10-01", "2007-11-01", "2007-12-01", "2008-01-01", "2008-02-01", "2008-03-01", "2008-04-01", "2008-05-01", "2008-06-01", "2008-07-01", "2008-08-01", "2008-09-01", "2008-10-01", "2008-11-01", "2008-12-01", "2009-01-01", "2009-02-01", "2009-03-01", "2009-04-01", "2009-05-01", "2009-06-01", "2009-07-01", "2009-08-01", "2009-09-01", "2009-10-01", "2009-11-01", "2009-12-01", "2010-01-01", "2010-02-01", "2010-03-01", "2010-04-01", "2010-05-01", "2010-06-01", "2010-07-01", "2010-08-01", "2010-09-01", "2010-10-01", "2010-11-01", "2010-12-01", "2011-01-01", "2011-02-01", "2011-03-01", "2011-04-01", "2011-05-01", "2011-06-01", "2011-07-01", "2011-08-01", "2011-09-01", "2011-10-01", "2011-11-01", "2011-12-01", "2012-01-01", "2012-02-01", "2012-03-01", "2012-04-01", "2012-05-01", "2012-06-01", "2012-07-01", "2012-08-01", "2012-09-01", "2012-10-01", "2012-11-01", "2012-12-01", "2013-01-01", "2013-02-01", "2013-03-01", "2013-04-01", "2013-05-01", "2013-06-01", "2013-07-01", "2013-08-01", "2013-09-01", "2013-10-01", "2013-11-01", "2013-12-01", "2014-01-01", "2014-02-01", "2014-03-01", "2014-04-01", "2014-05-01", "2014-06-01", "2014-07-01", "2014-08-01", "2014-09-01", "2014-10-01", "2014-11-01", "2014-12-01", "2015-01-01", "2015-02-01", "2015-03-01", "2015-04-01", "2015-05-01", "2015-06-01", "2015-07-01", "2015-08-01", "2015-09-01", "2015-10-01", "2015-11-01", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01", "2016-04-01", "2016-05-01", "2016-06-01", "2016-07-01", "2016-08-01", "2016-09-01", "2016-10-01", "2016-11-01", "2016-12-01", "2017-01-01", "2017-02-01", "2017-03-01", "2017-04-01", "2017-05-01", "2017-06-01", "2017-07-01", "2017-08-01", "2017-09-01", "2017-10-01", "2017-11-01", "2017-12-01", "2018-01-01", "2018-02-01", "2018-03-01", "2018-04-01", "2018-05-01", "2018-06-01", "2018-07-01", "2018-08-01", "2018-09-01", "2018-10-01", "2018-11-01", "2018-12-01", "2019-01-01", "2019-02-01", "2019-03-01", "2019-04-01", "2019-05-01", "2019-06-01", "2019-07-01", "2019-08-01", "2019-09-01", "2019-10-01", "2019-11-01", "2019-12-01", "2020-01-01", "2020-02-01", "2020-03-01", "2020-04-01", "2020-05-01", "2020-06-01", "2020-07-01", "2020-08-01", "2020-09-01", "2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01", "2021-05-01", "2021-06-01", "2021-07-01", "2021-08-01", "2021-09-01", "2021-10-01", "2021-11-01", "2021-12-01", "2022-01-01", "2022-02-01", "2022-03-01", "2022-04-01", "2022-05-01", "2022-06-01", "2022-07-01", "2022-08-01", "2022-09-01", "2022-10-01", "2022-11-01", "2022-12-01", "2023-01-01", "2023-02-01", "2023-03-01", "2023-04-01", "2023-05-01", "2023-06-01", "2023-07-01", "2023-08-01", "2023-09-01", "2023-10-01", "2023-11-01", "2023-12-01", "2024-01-01", "2024-02-01", "2024-03-01", "2024-04-01", "2024-05-01", "2024-06-01", "2024-07-01", "2024-08-01", "2024-09-01", "2024-10-01", "2024-11-01", "2024-12-01", "2025-01-01", "2025-02-01", "2025-03-01", "2025-04-01", "2025-05-01", "2025-06-01", "2025-07-01", "2025-08-01", "2025-09-01", "2025-10-01", "2025-11-01", "2025-12-01", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01"];
+const GT_VALS         = [37, 32, 29, 32, 25, 30, 34, 31, 32, 25, 30, 28, 35, 29, 25, 26, 28, 29, 29, 27, 24, 30, 18, 26, 35, 23, 24, 22, 26, 22, 25, 27, 26, 28, 25, 25, 29, 26, 24, 18, 28, 20, 26, 22, 24, 21, 25, 24, 32, 26, 23, 18, 19, 21, 23, 27, 19, 25, 23, 21, 28, 23, 19, 18, 19, 19, 19, 19, 19, 21, 18, 16, 25, 19, 21, 100, 36, 20, 18, 15, 18, 14, 13, 13, 20, 18, 16, 15, 28, 17, 16, 15, 16, 16, 15, 15, 21, 15, 15, 14, 13, 16, 15, 16, 17, 19, 16, 14, 23, 16, 15, 14, 14, 16, 15, 16, 18, 20, 18, 18, 30, 20, 19, 19, 20, 20, 23, 27, 22, 24, 24, 25, 39, 36, 31, 25, 26, 28, 31, 32, 32, 39, 36, 43, 59, 44, 41, 38, 36, 47, 53, 41, 49, 50, 50, 51, 75, 57, 52, 47, 44, 47, 47, 53, 53, 55, 53, 54, 70, 56, 48, 45, 46, 51, 52, 50, 55, 49, 51, 50, 56, 48, 46, 37, 36, 40, 40, 40, 44, 41, 43, 45, 54, 39, 35, 12, 15, 19, 25, 18, 16, 13, 13, 15, 14, 11, 15, 18, 24, 30, 32, 26, 26, 28, 27, 24, 35, 36, 35, 35, 35, 38, 41, 39, 35, 35, 37, 40, 51, 41, 39, 36, 34, 36, 40, 36, 35, 36, 39, 39, 44, 42, 42, 39, 38, 37, 40, 41, 39, 38, 43, 44, 45, 38, 38, 33, 37, 43, 45, 89, 81, 62, 64, 61, 67, 63, 86, 54];
+const MV_DATES        = ["2002-03-01", "2002-04-01", "2002-05-01", "2002-06-01", "2002-07-01", "2002-08-01", "2002-09-01", "2002-10-01", "2002-11-01", "2002-12-01", "2003-01-01", "2003-02-01", "2003-03-01", "2003-04-01", "2003-05-01", "2003-06-01", "2003-07-01", "2003-08-01", "2003-09-01", "2003-10-01", "2003-11-01", "2003-12-01", "2004-01-01", "2004-02-01", "2004-03-01", "2004-04-01", "2004-05-01", "2004-06-01", "2004-07-01", "2004-08-01", "2004-09-01", "2004-10-01", "2004-11-01", "2004-12-01", "2005-01-01", "2005-02-01", "2005-03-01", "2005-04-01", "2005-05-01", "2005-06-01", "2005-07-01", "2005-08-01", "2005-09-01", "2005-10-01", "2005-11-01", "2005-12-01", "2006-01-01", "2006-02-01", "2006-03-01", "2006-04-01", "2006-05-01", "2006-06-01", "2006-07-01", "2006-08-01", "2006-09-01", "2006-10-01", "2006-11-01", "2006-12-01", "2007-01-01", "2007-02-01", "2007-03-01", "2007-04-01", "2007-05-01", "2007-06-01", "2007-07-01", "2007-08-01", "2007-09-01", "2007-10-01", "2007-11-01", "2007-12-01", "2008-01-01", "2008-02-01", "2008-03-01", "2008-04-01", "2008-05-01", "2008-06-01", "2008-07-01", "2008-08-01", "2008-09-01", "2008-10-01", "2008-11-01", "2008-12-01", "2009-01-01", "2009-02-01", "2009-03-01", "2009-04-01", "2009-05-01", "2009-06-01", "2009-07-01", "2009-08-01", "2009-09-01", "2009-10-01", "2009-11-01", "2009-12-01", "2010-01-01", "2010-02-01", "2010-03-01", "2010-04-01", "2010-05-01", "2010-06-01", "2010-07-01", "2010-08-01", "2010-09-01", "2010-10-01", "2010-11-01", "2010-12-01", "2011-01-01", "2011-02-01", "2011-03-01", "2011-04-01", "2011-05-01", "2011-06-01", "2011-07-01", "2011-08-01", "2011-09-01", "2011-10-01", "2011-11-01", "2011-12-01", "2012-01-01", "2012-02-01", "2012-03-01", "2012-04-01", "2012-05-01", "2012-06-01", "2012-07-01", "2012-08-01", "2012-09-01", "2012-10-01", "2012-11-01", "2012-12-01", "2013-01-01", "2013-02-01", "2013-03-01", "2013-04-01", "2013-05-01", "2013-06-01", "2013-07-01", "2013-08-01", "2013-09-01", "2013-10-01", "2013-11-01", "2013-12-01", "2014-01-01", "2014-02-01", "2014-03-01", "2014-04-01", "2014-05-01", "2014-06-01", "2014-07-01", "2014-08-01", "2014-09-01", "2014-10-01", "2014-11-01", "2014-12-01", "2015-01-01", "2015-02-01", "2015-03-01", "2015-04-01", "2015-05-01", "2015-06-01", "2015-07-01", "2015-08-01", "2015-09-01", "2015-10-01", "2015-11-01", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01", "2016-04-01", "2016-05-01", "2016-06-01", "2016-07-01", "2016-08-01", "2016-09-01", "2016-10-01", "2016-11-01", "2016-12-01", "2017-01-01", "2017-02-01", "2017-03-01", "2017-04-01", "2017-05-01", "2017-06-01", "2017-07-01", "2017-08-01", "2017-09-01", "2017-10-01", "2017-11-01", "2017-12-01", "2018-01-01", "2018-02-01", "2018-03-01", "2018-04-01", "2018-05-01", "2018-06-01", "2018-07-01", "2018-08-01", "2018-09-01", "2018-10-01", "2018-11-01", "2018-12-01", "2019-01-01", "2019-02-01", "2019-03-01", "2019-04-01", "2019-05-01", "2019-06-01", "2019-07-01", "2019-08-01", "2019-09-01", "2019-10-01", "2019-11-01", "2019-12-01", "2020-01-01", "2020-02-01", "2020-03-01", "2020-04-01", "2020-05-01", "2020-06-01", "2020-07-01", "2020-08-01", "2020-09-01", "2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01", "2021-05-01", "2021-06-01", "2021-07-01", "2021-08-01", "2021-09-01", "2021-10-01", "2021-11-01", "2021-12-01", "2022-01-01", "2022-02-01", "2022-03-01", "2022-04-01", "2022-05-01", "2022-06-01", "2022-07-01", "2022-08-01", "2022-09-01", "2022-10-01", "2022-11-01", "2022-12-01", "2023-01-01", "2023-02-01", "2023-03-01", "2023-04-01", "2023-05-01", "2023-06-01", "2023-07-01", "2023-08-01", "2023-09-01", "2023-10-01", "2023-11-01", "2023-12-01", "2024-01-01", "2024-02-01", "2024-03-01", "2024-04-01", "2024-05-01", "2024-06-01", "2024-07-01", "2024-08-01", "2024-09-01", "2024-10-01", "2024-11-01", "2024-12-01", "2025-01-01", "2025-02-01", "2025-03-01", "2025-04-01", "2025-05-01", "2025-06-01", "2025-07-01", "2025-08-01", "2025-09-01", "2025-10-01", "2025-11-01", "2025-12-01"];
+const MV_VALS         = [16650, 19040, 18801, 32215, 46015, 50537, 24553, 17771, 12406, 10592, 12697, 12948, 18537, 20465, 20373, 34513, 52607, 58763, 29058, 22532, 15136, 11139, 13265, 15424, 18742, 24448, 25746, 38164, 64275, 64534, 30900, 25338, 15960, 11737, 14014, 15161, 18823, 21706, 27435, 40956, 65192, 65495, 34619, 27039, 15810, 14937, 15377, 14899, 17882, 25308, 31075, 44591, 66872, 69587, 39628, 32077, 21560, 20045, 18810, 17647, 23700, 27664, 34256, 55727, 80761, 81271, 39065, 34175, 23109, 22814, 20289, 20312, 25619, 26085, 36024, 55978, 81267, 83967, 43907, 32826, 24376, 22022, 19985, 18276, 23697, 27785, 34637, 54489, 82220, 92021, 42463, 30371, 21077, 17515, 18782, 20293, 26399, 23087, 28298, 54391, 83465, 89558, 40863, 34069, 21240, 18807, 22262, 22849, 26624, 32333, 37212, 65606, 97757, 101841, 51576, 38836, 22969, 20959, 26152, 27909, 33597, 37675, 45227, 74325, 112121, 115279, 64672, 44994, 36950, 28020, 33290, 39979, 48868, 45765, 53648, 89859, 123521, 131832, 73189, 52926, 46451, 41688, 46650, 52449, 66133, 59225, 66713, 110602, 144581, 153457, 88289, 66516, 60850, 53716, 62759, 70478, 83855, 71608, 91023, 137314, 180679, 189430, 123040, 99286, 81609, 70857, 77559, 100742, 115808, 94875, 124249, 186538, 236016, 241559, 175335, 158542, 131723, 124780, 135999, 148343, 167806, 153568, 145980, 221845, 271920, 284124, 203886, 181919, 144641, 135240, 147569, 160078, 173061, 147551, 165240, 233874, 278613, 291344, 231681, 199626, 150058, 137230, 139055, 149004, 170177, 120306, 126309, 194912, 231281, 251887, 183654, 163094, 131054, 125420, 121605, 133907, 81346, 924, 996, 6118, 45716, 63807, 10175, 5992, 3373, 8149, 4364, 2997, 4587, 5788, 14373, 42567, 109932, 151849, 108233, 103227, 75456, 64318, 67656, 75830, 101173, 102228, 107603, 176680, 234189, 242670, 176988, 158787, 138193, 114788, 120713, 136835, 160536, 141807, 158045, 232861, 274827, 280721, 218235, 202979, 148410, 135699, 128061, 155710, 171969, 137210, 157366, 212391, 276621, 281450, 223025, 212867, 162273, 142448, 121590, 148657, 152485, 149123, 159571, 233802, 302057, 312964, 224182, 201422, 141769, 120016];
+const SEASON_MONTHS   = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const SEASON_FRAMES   = [{"year": 2002, "summer": [0, 0, 0, 0, 0, 32215, 46015, 50537, 0, 0, 0, 0], "rest": [0, 0, 16650, 19040, 18801, 0, 0, 0, 24553, 17771, 12406, 10592]}, {"year": 2003, "summer": [0, 0, 0, 0, 0, 34513, 52607, 58763, 0, 0, 0, 0], "rest": [12697, 12948, 18537, 20465, 20373, 0, 0, 0, 29058, 22532, 15136, 11139]}, {"year": 2004, "summer": [0, 0, 0, 0, 0, 38164, 64275, 64534, 0, 0, 0, 0], "rest": [13265, 15424, 18742, 24448, 25746, 0, 0, 0, 30900, 25338, 15960, 11737]}, {"year": 2005, "summer": [0, 0, 0, 0, 0, 40956, 65192, 65495, 0, 0, 0, 0], "rest": [14014, 15161, 18823, 21706, 27435, 0, 0, 0, 34619, 27039, 15810, 14937]}, {"year": 2006, "summer": [0, 0, 0, 0, 0, 44591, 66872, 69587, 0, 0, 0, 0], "rest": [15377, 14899, 17882, 25308, 31075, 0, 0, 0, 39628, 32077, 21560, 20045]}, {"year": 2007, "summer": [0, 0, 0, 0, 0, 55727, 80761, 81271, 0, 0, 0, 0], "rest": [18810, 17647, 23700, 27664, 34256, 0, 0, 0, 39065, 34175, 23109, 22814]}, {"year": 2008, "summer": [0, 0, 0, 0, 0, 55978, 81267, 83967, 0, 0, 0, 0], "rest": [20289, 20312, 25619, 26085, 36024, 0, 0, 0, 43907, 32826, 24376, 22022]}, {"year": 2009, "summer": [0, 0, 0, 0, 0, 54489, 82220, 92021, 0, 0, 0, 0], "rest": [19985, 18276, 23697, 27785, 34637, 0, 0, 0, 42463, 30371, 21077, 17515]}, {"year": 2010, "summer": [0, 0, 0, 0, 0, 54391, 83465, 89558, 0, 0, 0, 0], "rest": [18782, 20293, 26399, 23087, 28298, 0, 0, 0, 40863, 34069, 21240, 18807]}, {"year": 2011, "summer": [0, 0, 0, 0, 0, 65606, 97757, 101841, 0, 0, 0, 0], "rest": [22262, 22849, 26624, 32333, 37212, 0, 0, 0, 51576, 38836, 22969, 20959]}, {"year": 2012, "summer": [0, 0, 0, 0, 0, 74325, 112121, 115279, 0, 0, 0, 0], "rest": [26152, 27909, 33597, 37675, 45227, 0, 0, 0, 64672, 44994, 36950, 28020]}, {"year": 2013, "summer": [0, 0, 0, 0, 0, 89859, 123521, 131832, 0, 0, 0, 0], "rest": [33290, 39979, 48868, 45765, 53648, 0, 0, 0, 73189, 52926, 46451, 41688]}, {"year": 2014, "summer": [0, 0, 0, 0, 0, 110602, 144581, 153457, 0, 0, 0, 0], "rest": [46650, 52449, 66133, 59225, 66713, 0, 0, 0, 88289, 66516, 60850, 53716]}, {"year": 2015, "summer": [0, 0, 0, 0, 0, 137314, 180679, 189430, 0, 0, 0, 0], "rest": [62759, 70478, 83855, 71608, 91023, 0, 0, 0, 123040, 99286, 81609, 70857]}, {"year": 2016, "summer": [0, 0, 0, 0, 0, 186538, 236016, 241559, 0, 0, 0, 0], "rest": [77559, 100742, 115808, 94875, 124249, 0, 0, 0, 175335, 158542, 131723, 124780]}, {"year": 2017, "summer": [0, 0, 0, 0, 0, 221845, 271920, 284124, 0, 0, 0, 0], "rest": [135999, 148343, 167806, 153568, 145980, 0, 0, 0, 203886, 181919, 144641, 135240]}, {"year": 2018, "summer": [0, 0, 0, 0, 0, 233874, 278613, 291344, 0, 0, 0, 0], "rest": [147569, 160078, 173061, 147551, 165240, 0, 0, 0, 231681, 199626, 150058, 137230]}, {"year": 2019, "summer": [0, 0, 0, 0, 0, 194912, 231281, 251887, 0, 0, 0, 0], "rest": [139055, 149004, 170177, 120306, 126309, 0, 0, 0, 183654, 163094, 131054, 125420]}, {"year": 2020, "summer": [0, 0, 0, 0, 0, 6118, 45716, 63807, 0, 0, 0, 0], "rest": [121605, 133907, 81346, 924, 996, 0, 0, 0, 10175, 5992, 3373, 8149]}, {"year": 2021, "summer": [0, 0, 0, 0, 0, 42567, 109932, 151849, 0, 0, 0, 0], "rest": [4364, 2997, 4587, 5788, 14373, 0, 0, 0, 108233, 103227, 75456, 64318]}, {"year": 2022, "summer": [0, 0, 0, 0, 0, 176680, 234189, 242670, 0, 0, 0, 0], "rest": [67656, 75830, 101173, 102228, 107603, 0, 0, 0, 176988, 158787, 138193, 114788]}, {"year": 2023, "summer": [0, 0, 0, 0, 0, 232861, 274827, 280721, 0, 0, 0, 0], "rest": [120713, 136835, 160536, 141807, 158045, 0, 0, 0, 218235, 202979, 148410, 135699]}, {"year": 2024, "summer": [0, 0, 0, 0, 0, 212391, 276621, 281450, 0, 0, 0, 0], "rest": [128061, 155710, 171969, 137210, 157366, 0, 0, 0, 223025, 212867, 162273, 142448]}, {"year": 2025, "summer": [0, 0, 0, 0, 0, 233802, 302057, 312964, 0, 0, 0, 0], "rest": [121590, 148657, 152485, 149123, 159571, 0, 0, 0, 224182, 201422, 141769, 120016]}];
+
+const C = {teal:'#00B4A0',dark:'#0D1B2A',gray:'#5A6E7F',lgray:'#DDE6ED',red:'#D95F5F',orange:'#E8863A',purple:'#7059C4',white:'#FFFFFF',bg:'#FFFFFF',teal2:'#4A90A4'};
+const cfg = {displayModeBar:false,responsive:true};
+const L = (extra={}) => ({paper_bgcolor:C.white,plot_bgcolor:C.white,font:{family:'DM Sans,sans-serif',color:C.gray},margin:{t:30,r:30,b:55,l:75},xaxis:{gridcolor:'rgba(0,0,0,0.05)',zerolinecolor:'transparent',tickfont:{color:C.gray}},yaxis:{gridcolor:'rgba(0,0,0,0.06)',zerolinecolor:'transparent',tickfont:{color:C.gray}},...extra});
+const LB = (extra={}) => ({...L(extra),paper_bgcolor:C.bg,plot_bgcolor:C.bg});
+
+// ── 1. GROWTH ───────────────────────────────────────────────────────────
+Plotly.newPlot('cGrowth',[{x:ANNUAL_YEARS,y:ANNUAL_VISITORS,type:'scatter',mode:'lines+markers',line:{color:C.teal,width:3,shape:'spline'},fill:'tozeroy',fillcolor:'rgba(0,180,160,0.08)',marker:{color:ANNUAL_VISITORS.map(v=>v<600000?C.red:C.teal),size:8,line:{color:'white',width:1.5}},hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>',showlegend:false}],L({height:400,yaxis:{...L().yaxis,tickformat:'.2s',title:{text:'Annual Visitors',font:{color:C.gray}}},xaxis:{...L().xaxis,tickmode:'linear',dtick:2},annotations:[{x:2011,y:540824,text:'Boom starts',showarrow:true,arrowhead:2,arrowcolor:C.teal,font:{color:C.teal,size:12},ax:50,ay:-45},{x:2018,y:2315925,text:'Peak 2018: 2.3M',showarrow:true,arrowhead:2,arrowcolor:C.teal,font:{color:C.teal,size:12},ax:-80,ay:-35},{x:2020,y:482108,text:'COVID −79%',showarrow:true,arrowhead:2,arrowcolor:C.red,font:{color:C.red,size:12},ax:55,ay:-50}]}),cfg);
+
+// ── 2. DISRUPTION ────────────────────────────────────────────────────────
+Plotly.newPlot('cDisruption',[{x:ANNUAL_YEARS,y:ANNUAL_VISITORS,type:'scatter',mode:'lines+markers',line:{color:C.teal,width:3,shape:'spline'},fill:'tozeroy',fillcolor:'rgba(0,180,160,0.08)',marker:{color:ANNUAL_VISITORS.map(v=>v<600000?C.red:C.teal),size:9,line:{color:'white',width:1.5}},hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>',showlegend:false}],LB({height:360,yaxis:{...LB().yaxis,tickformat:'.2s',title:{text:'Annual Visitors',font:{color:C.gray}}},xaxis:{...LB().xaxis,tickmode:'linear',dtick:2},annotations:[{x:2020,y:482108,text:'COVID: −79%',showarrow:true,arrowhead:2,arrowcolor:C.red,font:{color:C.red,size:13},ax:70,ay:-65},{x:2023,y:2211668,text:'Recovery',showarrow:true,arrowhead:2,arrowcolor:C.teal,font:{color:C.teal,size:13},ax:-70,ay:-40}]}),cfg);
+
+// ── 3. SEASONALITY (animated) ────────────────────────────────────────────
+{
+  const frames = SEASON_FRAMES.map(f => ({
+    name: String(f.year),
+    data: [
+      {x:SEASON_MONTHS, y:f.rest,   type:'bar', name:'Rest of year',     marker:{color:C.teal2}, hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
+      {x:SEASON_MONTHS, y:f.summer, type:'bar', name:'Summer (Jun–Aug)', marker:{color:C.teal},  hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
+    ],
+    layout:{title:{text:`Monthly Visitors by Season — ${f.year}`}}
+  }));
+
+  const initFrame = SEASON_FRAMES[0];
+  Plotly.newPlot('cSeason',[
+    {x:SEASON_MONTHS, y:initFrame.rest,   type:'bar', name:'Rest of year',     marker:{color:C.teal2}, hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
+    {x:SEASON_MONTHS, y:initFrame.summer, type:'bar', name:'Summer (Jun–Aug)', marker:{color:C.teal},  hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
+  ], L({
+    title:{text:`Monthly Visitors by Season — ${initFrame.year}`, font:{color:C.dark,size:13}},
+    barmode:'stack',
+    height:460,
+    yaxis:{...L().yaxis, tickformat:'.2s', range:[0,450000], title:{text:'Visitors',font:{color:C.gray}}},
+    xaxis:{...L().xaxis, title:{text:'Month',font:{color:C.gray}}},
+    legend:{orientation:'h',y:1.1,x:0,font:{color:C.gray}},
+    margin:{t:60,r:30,b:120,l:80},
+    updatemenus:[{
+      type:'buttons', showactive:false,
+      x:0, y:-0.18, xanchor:'left',
+      bgcolor:C.dark, bordercolor:C.teal,
+      font:{color:'white',size:12},
+      buttons:[
+        {label:'▶  Play', method:'animate', args:[null,{frame:{duration:600,redraw:true},fromcurrent:true,transition:{duration:200}}]},
+        {label:'⏸', method:'animate', args:[[null],{frame:{duration:0,redraw:false},mode:'immediate'}]}
+      ]
+    }],
+    sliders:[{
+      active:0,
+      currentvalue:{prefix:'Year: ',font:{color:C.gray,size:13}},
+      pad:{t:50,b:10},
+      bgcolor:'#FFFFFF', bordercolor:C.lgray,
+      font:{color:C.gray,size:10},
+      steps: SEASON_FRAMES.map((f,i) => ({
+        args:[[String(f.year)],{frame:{duration:400,redraw:true},mode:'immediate'}],
+        label:String(f.year), method:'animate'
+      }))
+    }]
+  }), cfg);
+
+  Plotly.addFrames('cSeason', frames);
+}
+
+// ── 4. ORIGINS ───────────────────────────────────────────────────────────
+Plotly.newPlot('cOrigins',[
+  {x:TOP_VISITORS,y:TOP_COUNTRIES,type:'bar',orientation:'h',marker:{color:C.teal,opacity:.88},name:'Visitors 2018',hovertemplate:'<b>%{y}</b><br>%{x:,.0f} visitors<extra></extra>',xaxis:'x',yaxis:'y'},
+  {x:CS_YEARS,y:CS_USA,type:'scatter',mode:'lines+markers',name:'USA',line:{color:C.teal,width:2.5},marker:{size:5},hovertemplate:'<b>USA %{x}</b><br>%{y:.1f}%<extra></extra>',xaxis:'x2',yaxis:'y2'},
+  {x:CS_YEARS,y:CS_UK,type:'scatter',mode:'lines+markers',name:'UK',line:{color:C.orange,width:2.5},marker:{size:5},hovertemplate:'<b>UK %{x}</b><br>%{y:.1f}%<extra></extra>',xaxis:'x2',yaxis:'y2'},
+  {x:CS_YEARS,y:CS_DE,type:'scatter',mode:'lines+markers',name:'Germany',line:{color:C.purple,width:2.5},marker:{size:5},hovertemplate:'<b>Germany %{x}</b><br>%{y:.1f}%<extra></extra>',xaxis:'x2',yaxis:'y2'},
+],{paper_bgcolor:C.bg,plot_bgcolor:C.bg,font:{family:'DM Sans,sans-serif',color:C.gray},grid:{rows:1,columns:2,pattern:'independent'},height:420,margin:{t:50,r:40,b:60,l:110},xaxis:{gridcolor:'rgba(0,0,0,0.05)',tickformat:'.2s',tickfont:{color:C.gray},domain:[0,0.47],title:{text:'Visitors',font:{color:C.gray}}},yaxis:{gridcolor:'transparent',tickfont:{color:C.gray},autorange:'reversed'},xaxis2:{gridcolor:'rgba(0,0,0,0.05)',tickfont:{color:C.gray},domain:[0.53,1],title:{text:'Year',font:{color:C.gray}}},yaxis2:{gridcolor:'rgba(0,0,0,0.05)',tickfont:{color:C.gray},title:{text:'% of annual visitors',font:{color:C.gray}},ticksuffix:'%'},annotations:[{text:'Top 10 Countries — Peak Year 2018',x:0.23,y:1.07,xref:'paper',yref:'paper',showarrow:false,font:{size:12,color:C.dark}},{text:'USA / UK / Germany Share Over Time',x:0.76,y:1.07,xref:'paper',yref:'paper',showarrow:false,font:{size:12,color:C.dark}}],legend:{x:0.53,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{color:C.gray}},showlegend:true},cfg);
+
+// ── 5. ISK ───────────────────────────────────────────────────────────────
+Plotly.newPlot('cISK',[
+  {x:ANNUAL_YEARS,y:ANNUAL_VISITORS,type:'scatter',mode:'lines+markers',name:'Annual Visitors',line:{color:C.teal,width:2.5,shape:'spline'},marker:{color:C.teal,size:7},fill:'tozeroy',fillcolor:'rgba(0,180,160,0.08)',hovertemplate:'<b>%{x}</b><br>Visitors: %{y:,.0f}<extra></extra>',yaxis:'y'},
+  {x:ISK_YEARS,y:ISK_VALS,type:'scatter',mode:'lines+markers',name:'ISK Index (higher = weaker)',line:{color:C.orange,width:2.5,dash:'dot'},marker:{color:C.orange,size:6,symbol:'square'},hovertemplate:'<b>%{x}</b><br>ISK Index: %{y:.1f}<extra></extra>',yaxis:'y2'},
+],L({height:400,legend:{orientation:'h',y:1.08,x:0,font:{color:C.gray,size:11}},yaxis:{...L().yaxis,title:{text:'Annual Visitors',font:{color:C.teal,size:11}},tickformat:'.2s',tickfont:{color:C.teal}},yaxis2:{overlaying:'y',side:'right',title:{text:'ISK Index',font:{color:C.orange,size:11}},tickfont:{color:C.orange},gridcolor:'transparent',zerolinecolor:'transparent'},annotations:[{x:2008,y:472672,text:'2008 crisis<br>ISK collapses',showarrow:true,arrowhead:2,arrowcolor:C.orange,font:{color:C.orange,size:11},ax:60,ay:-55,yref:'y'},{x:2018,y:2315925,text:'Peak visitors',showarrow:true,arrowhead:2,arrowcolor:C.teal,font:{color:C.teal,size:11},ax:-65,ay:-35,yref:'y'}]}),cfg);
+
+// ── 6. VOLCANO ───────────────────────────────────────────────────────────
+const volcanos=[['2004-11-01','Grímsvötn (Nov 2004)','#E67E22','triangle-up',3,12],['2010-03-01','Eyjafjallajökull (Mar 2010)','#C0392B','triangle-up',2,6],['2010-04-01','Eyjafjallajökull (Apr 2010) ★','#C0392B','star',3,18],['2011-05-01','Grímsvötn (May 2011)','#E67E22','triangle-up',3,12],['2014-08-01','Holuhraun (Aug 2014)','#E67E22','triangle-up',3,12],['2021-03-01','Fagradalsfjall (Mar 2021)','#8E44AD','triangle-up',3,12],['2022-08-01','Meradalaeldar (Aug 2022)','#9B59B6','triangle-up',3,10],['2023-07-01','Litli-Hrútur (Jul 2023)','#2980B9','triangle-up',3,10],['2023-12-01','Sundhnúksgígur (Dec 2023)','#1ABC9C','triangle-up',2,6],['2024-01-01','Svartsengi (Jan 2024) ★','#16A085','star',2,14],['2024-02-01','Svartsengi (Feb 2024)','#16A085','triangle-up',1,4],['2024-03-01','Svartsengi (Mar 2024)','#16A085','triangle-up',1,4],['2024-05-01','Svartsengi (May 2024)','#16A085','triangle-up',1,4],['2024-08-01','Svartsengi (Aug 2024)','#16A085','triangle-up',1,4],['2024-11-01','Svartsengi (Nov 2024)','#16A085','triangle-up',1,4],['2025-04-01','Svartsengi (Apr 2025)','#16A085','triangle-up',1,4],['2025-07-01','Svartsengi (Jul 2025)','#16A085','triangle-up',1,4]];
+const vT=[];
+vT.push({x:MV_DATES,y:MV_VALS,type:'bar',name:'Monthly Visitors',marker:{color:'rgba(0,180,160,0.2)',line:{width:0}},hovertemplate:'<b>%{x|%b %Y}</b><br>Visitors: %{y:,.0f}<extra></extra>',yaxis:'y2'});
+vT.push({x:GT_DATES,y:GT_VALS,type:'scatter',mode:'lines',name:'Search: "flights to iceland"',line:{color:C.orange,width:2.5},hovertemplate:'<b>%{x|%b %Y}</b><br>Search interest: %{y}<extra></extra>',yaxis:'y'});
+const seen={};
+volcanos.forEach(([ds,name,color,symbol])=>{const sys=name.split('(')[0].trim().replace(' ★','');const showL=!seen[sys];seen[sys]=true;const gi=GT_DATES.indexOf(ds);const yval=gi>=0?GT_VALS[gi]:25;const mi=MV_DATES.indexOf(ds);const vc=mi>=0?MV_VALS[mi].toLocaleString():'N/A';vT.push({x:[ds],y:[yval],type:'scatter',mode:'markers',name:sys,legendgroup:sys,showlegend:showL,marker:{color,size:name.includes('★')?15:10,symbol,line:{color:'white',width:1.5}},hovertemplate:`<b>${name}</b><br>Search: ${yval}<br>Visitors: ${vc}<extra></extra>`,yaxis:'y'});});
+const zBtn=(label,ds,mb,ma)=>{const d=new Date(ds),x0=new Date(d),x1=new Date(d);x0.setMonth(x0.getMonth()-mb);x1.setMonth(x1.getMonth()+ma);return {label,method:'relayout',args:[{'xaxis.range':[x0.toISOString().slice(0,10),x1.toISOString().slice(0,10)],'xaxis.autorange':false}]}};
+Plotly.newPlot('cVolcano',vT,{paper_bgcolor:C.white,plot_bgcolor:C.white,font:{family:'DM Sans,sans-serif',color:C.gray},height:500,margin:{t:110,r:80,b:60,l:75},hovermode:'x unified',barmode:'overlay',updatemenus:[{type:'buttons',direction:'right',x:0,y:1.22,xanchor:'left',showactive:true,bgcolor:C.white,bordercolor:C.lgray,font:{size:10,color:C.dark},buttons:[{label:'📊 All',method:'relayout',args:[{'xaxis.autorange':true}]},zBtn('Grímsvötn 2004','2004-11-01',3,12),zBtn('Eyjafjallajökull ★','2010-04-01',3,18),zBtn('Grímsvötn 2011','2011-05-01',3,12),zBtn('Holuhraun','2014-08-01',3,12),zBtn('Fagradalsfjall','2021-03-01',3,12),zBtn('Meradalaeldar','2022-08-01',3,10),zBtn('Litli-Hrútur','2023-07-01',3,10),zBtn('Svartsengi ★','2024-01-01',2,14)]}],xaxis:{gridcolor:'rgba(0,0,0,0.05)',tickfont:{color:C.gray},rangeslider:{visible:true,bgcolor:C.bg}},yaxis:{title:{text:'Search Interest (0–100)',font:{color:C.orange,size:11}},tickfont:{color:C.orange},gridcolor:'rgba(0,0,0,0.05)',range:[0,120]},yaxis2:{overlaying:'y',side:'right',title:{text:'Monthly Visitors',font:{color:C.teal,size:11}},tickfont:{color:C.teal},tickformat:'.2s',gridcolor:'transparent',zerolinecolor:'transparent'},legend:{x:1.08,y:1,bgcolor:'rgba(0,0,0,0)',font:{color:C.gray,size:11},title:{text:'Volcano:',font:{color:C.gray}}},shapes:[{type:'rect',x0:'2020-03-01',x1:'2021-06-01',y0:0,y1:1,yref:'paper',fillcolor:'rgba(217,95,95,0.06)',line:{width:0}}],annotations:[{x:'2020-09-01',y:1.02,yref:'paper',text:'COVID',showarrow:false,font:{color:C.red,size:10}}]},cfg);
+
+// SCROLL ANIMATION
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');}),{threshold:0.1});
+document.querySelectorAll('section').forEach(s=>obs.observe(s));
+window.addEventListener('scroll',()=>{document.getElementById('prog').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';});
+</script>
+</body>
+</html>
