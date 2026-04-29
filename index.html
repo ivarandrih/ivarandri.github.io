@@ -135,7 +135,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">03 — Seasonality</div>
   <h2>Iceland says year-round.<br>The data says summer.</h2>
   <p class="lead">July and August alone account for nearly 30% of all annual visitors. Despite heavy marketing of winter tourism — northern lights, Christmas markets — the seasonal gap remains stark year after year. Press play to watch how the pattern evolved from 2002 to 2025.</p>
-  <div class="chart-wrap"><div id="cSeason"></div></div>
+  <div class="chart-wrap"><iframe src="visualizations/monthly.html" title="Drug offense ratio map"></iframe></div>
   <div class="finding">❄️ The summer dominance has barely shifted over 20+ years. Winter months have grown in absolute numbers, but their <strong>share</strong> of annual visitors remains almost unchanged — Iceland is not yet a true year-round destination despite the marketing.</div>
 </section>
 </div>
@@ -212,54 +212,6 @@ const cfg = {displayModeBar:false,responsive:true};
 const L = (extra={}) => ({paper_bgcolor:C.white,plot_bgcolor:C.white,font:{family:'DM Sans,sans-serif',color:C.gray},margin:{t:30,r:30,b:55,l:75},xaxis:{gridcolor:'rgba(0,0,0,0.05)',zerolinecolor:'transparent',tickfont:{color:C.gray}},yaxis:{gridcolor:'rgba(0,0,0,0.06)',zerolinecolor:'transparent',tickfont:{color:C.gray}},...extra});
 const LB = (extra={}) => ({...L(extra),paper_bgcolor:C.bg,plot_bgcolor:C.bg});
 
-// ── 3. SEASONALITY (animated) ────────────────────────────────────────────
-{
-  const frames = SEASON_FRAMES.map(f => ({
-    name: String(f.year),
-    data: [
-      {x:SEASON_MONTHS, y:f.rest,   type:'bar', name:'Rest of year',     marker:{color:C.teal2}, hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-      {x:SEASON_MONTHS, y:f.summer, type:'bar', name:'Summer (Jun–Aug)', marker:{color:C.teal},  hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-    ],
-    layout:{title:{text:`Monthly Visitors by Season — ${f.year}`}}
-  }));
-
-  const initFrame = SEASON_FRAMES[0];
-  Plotly.newPlot('cSeason',[
-    {x:SEASON_MONTHS, y:initFrame.rest,   type:'bar', name:'Rest of year',     marker:{color:C.teal2}, hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-    {x:SEASON_MONTHS, y:initFrame.summer, type:'bar', name:'Summer (Jun–Aug)', marker:{color:C.teal},  hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-  ], L({
-    title:{text:`Monthly Visitors by Season — ${initFrame.year}`, font:{color:C.dark,size:13}},
-    barmode:'stack',
-    height:460,
-    yaxis:{...L().yaxis, tickformat:'.2s', range:[0,450000], title:{text:'Visitors',font:{color:C.gray}}},
-    xaxis:{...L().xaxis, title:{text:'Month',font:{color:C.gray}}},
-    legend:{orientation:'h',y:1.1,x:0,font:{color:C.gray}},
-    margin:{t:60,r:30,b:120,l:80},
-    updatemenus:[{
-      type:'buttons', showactive:false,
-      x:0, y:-0.18, xanchor:'left',
-      bgcolor:C.dark, bordercolor:C.teal,
-      font:{color:'white',size:12},
-      buttons:[
-        {label:'▶  Play', method:'animate', args:[null,{frame:{duration:600,redraw:true},fromcurrent:true,transition:{duration:200}}]},
-        {label:'⏸', method:'animate', args:[[null],{frame:{duration:0,redraw:false},mode:'immediate'}]}
-      ]
-    }],
-    sliders:[{
-      active:0,
-      currentvalue:{prefix:'Year: ',font:{color:C.gray,size:13}},
-      pad:{t:50,b:10},
-      bgcolor:'#FFFFFF', bordercolor:C.lgray,
-      font:{color:C.gray,size:10},
-      steps: SEASON_FRAMES.map((f,i) => ({
-        args:[[String(f.year)],{frame:{duration:400,redraw:true},mode:'immediate'}],
-        label:String(f.year), method:'animate'
-      }))
-    }]
-  }), cfg);
-
-  Plotly.addFrames('cSeason', frames);
-}
 
 // ── 4. ORIGINS ───────────────────────────────────────────────────────────
 Plotly.newPlot('cOrigins',[
