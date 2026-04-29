@@ -212,10 +212,6 @@ const cfg = {displayModeBar:false,responsive:true};
 const L = (extra={}) => ({paper_bgcolor:C.white,plot_bgcolor:C.white,font:{family:'DM Sans,sans-serif',color:C.gray},margin:{t:30,r:30,b:55,l:75},xaxis:{gridcolor:'rgba(0,0,0,0.05)',zerolinecolor:'transparent',tickfont:{color:C.gray}},yaxis:{gridcolor:'rgba(0,0,0,0.06)',zerolinecolor:'transparent',tickfont:{color:C.gray}},...extra});
 const LB = (extra={}) => ({...L(extra),paper_bgcolor:C.bg,plot_bgcolor:C.bg});
 
-
-// ── 2. DISRUPTION ────────────────────────────────────────────────────────
-Plotly.newPlot('cDisruption',[{x:ANNUAL_YEARS,y:ANNUAL_VISITORS,type:'scatter',mode:'lines+markers',line:{color:C.teal,width:3,shape:'spline'},fill:'tozeroy',fillcolor:'rgba(0,180,160,0.08)',marker:{color:ANNUAL_VISITORS.map(v=>v<600000?C.red:C.teal),size:9,line:{color:'white',width:1.5}},hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>',showlegend:false}],LB({height:360,yaxis:{...LB().yaxis,tickformat:'.2s',title:{text:'Annual Visitors',font:{color:C.gray}}},xaxis:{...LB().xaxis,tickmode:'linear',dtick:2},annotations:[{x:2020,y:482108,text:'COVID: −79%',showarrow:true,arrowhead:2,arrowcolor:C.red,font:{color:C.red,size:13},ax:70,ay:-65},{x:2023,y:2211668,text:'Recovery',showarrow:true,arrowhead:2,arrowcolor:C.teal,font:{color:C.teal,size:13},ax:-70,ay:-40}]}),cfg);
-
 // ── 3. SEASONALITY (animated) ────────────────────────────────────────────
 {
   const frames = SEASON_FRAMES.map(f => ({
