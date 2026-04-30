@@ -48,6 +48,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
 .lead{font-size:1.05rem;line-height:1.8;color:var(--muted);max-width:640px;margin-bottom:2.5rem;}
 .chart-wrap{background:var(--white);border:1px solid var(--light-gray);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.07);overflow:hidden;margin-bottom:1.5rem;}
 .chart-wrap img{display:block;width:100%;max-width:100%;height:auto;}
+.chart-wrap iframe{display:block;width:100%;height:520px;border:0;}
 .alt .chart-wrap{background:var(--white);}
 .finding{padding:1.1rem 1.4rem;border-left:3px solid var(--teal);background:rgba(0,180,160,.06);border-radius:0 8px 8px 0;font-size:.95rem;color:var(--muted);line-height:1.7;}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:1.8rem;}
@@ -121,7 +122,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">02 — Disruption</div>
   <h2>Then COVID hit —<br>and everything collapsed</h2>
   <p class="lead">In 2020, international travel froze almost overnight. Iceland's visitor numbers dropped 79% in a single year — exposing just how fragile a tourism-dependent economy can be when the world stops moving.</p>
-  <div class="chart-wrap"><img src="images/disruption.png" alt="Annual visitor numbers to Iceland from 2002 to 2025, showing flat growth until 2010 and a steep boom afterward"></div>
+  <div class="chart-wrap"><img src="images/disruption.png" alt="Major disruptions to Iceland tourism over time, including the 2008 financial crisis, 2010 Eyjafjallajökull eruption, and COVID"></div>
   <div class="cards">
     <div class="card"><div class="big red">−79%</div><p>Visitors in 2020 vs 2019. The sharpest single-year collapse in the entire dataset.</p></div>
     <div class="card"><div class="big green">+252%</div><p>Recovery by 2022. Iceland bounced back faster than most destinations globally, surpassing pre-COVID levels by 2023.</p></div>
@@ -135,7 +136,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">03 — Seasonality</div>
   <h2>Iceland says year-round.<br>The data says summer.</h2>
   <p class="lead">July and August alone account for nearly 30% of all annual visitors. Despite heavy marketing of winter tourism — northern lights, Christmas markets — the seasonal gap remains stark year after year. Press play to watch how the pattern evolved from 2002 to 2025.</p>
-  <div class="chart-wrap"><iframe src="visualizations/monthly.html" title="Drug offense ratio map"></iframe></div>
+  <div class="chart-wrap"><iframe src="visualizations/monthly.html" title="Monthly visitors to Iceland by season"></iframe></div>
   <div class="finding">❄️ The summer dominance has barely shifted over 20+ years. Winter months have grown in absolute numbers, but their <strong>share</strong> of annual visitors remains almost unchanged — Iceland is not yet a true year-round destination despite the marketing.</div>
 </section>
 </div>
@@ -146,7 +147,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">04 — Where They Come From</div>
   <h2>A surprisingly concentrated<br>visitor base</h2>
   <p class="lead">The USA alone sent nearly 700,000 tourists in peak year 2018 — more than the next two countries combined. But the USA's dominance is gradually declining as Iceland diversifies its visitor base. Poland, Spain, and France have all grown faster proportionally since 2012.</p>
-  <div class="chart-wrap"><iframe src="images/origins.png" title="Drug offense ratio map"></iframe></div>
+  <div class="chart-wrap"><img src="images/origins.png" alt="Top countries of origin for visitors to Iceland"></div>
   <div class="finding">🌍 The USA's share of total visitors peaked around 2008–2010 and has been declining steadily since. Iceland is becoming less dependent on a single market — but the top 3 countries still account for over 50% of all visitors.</div>
 </section>
 </div>
@@ -157,7 +158,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">05 — The Icelandic Króna</div>
   <h2>Did a weak currency<br>fuel the boom?</h2>
   <p class="lead">The ISK collapsed after the 2008 financial crisis, making Iceland dramatically cheaper for foreign visitors. As the króna weakened, tourist numbers climbed. When it strengthened again post-2016, growth slowed — suggesting currency played a real role.</p>
-  <div class="chart-wrap"><iframe src="images/isk.png" title="Drug offense ratio map"></iframe></div>
+  <div class="chart-wrap"><img src="images/isk.png" alt="Icelandic króna exchange rate trend over time alongside annual visitor numbers"></div>
   <div class="finding">💱 The inverse relationship is striking: as the ISK weakened after 2008, tourism took off from 2011. As the króna recovered post-2016, visitor growth plateaued. Correlation is not causation — airline expansion and social media also played roles — but the timing is hard to ignore.</div>
 </section>
 </div>
@@ -168,7 +169,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">06 — Volcanoes & Global Interest</div>
   <h2>Disaster as a<br>marketing tool?</h2>
   <p class="lead">Google search interest for "flights to iceland" spikes around every major volcanic eruption. The 2010 Eyjafjallajökull eruption hit a perfect score of 100 in Google Trends — and the tourism boom followed exactly one year later. Click any button to zoom into that eruption window.</p>
-  <div class="chart-wrap"><iframe src="visualizations/volcano.html" title="Drug offense ratio map"></iframe></div>
+  <div class="chart-wrap"><iframe src="visualizations/volcano.html" title="Volcanic eruptions and Google search interest in Iceland"></iframe></div>
   <div class="volc-list">
     <div class="volc"><div class="volc-year">2010</div><div class="volc-body"><strong>Eyjafjallajökull ★</strong><span>April eruption grounded 100,000+ flights across Europe. Google search interest hit 100 — the all-time peak. Tourism began accelerating the following year, suggesting a ~12-month lag between viral moment and actual bookings.</span></div></div>
     <div class="volc"><div class="volc-year">2014–15</div><div class="volc-body"><strong>Holuhraun / Bárðarbunga</strong><span>Largest eruption in Iceland in 200 years. No flight disruption — search bump was smaller, consistent with the idea that disruption drives awareness more than eruption size alone.</span></div></div>
