@@ -135,7 +135,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">03 — Seasonality</div>
   <h2>Iceland says year-round.<br>The data says summer.</h2>
   <p class="lead">July and August alone account for nearly 30% of all annual visitors. Despite heavy marketing of winter tourism — northern lights, Christmas markets — the seasonal gap remains stark year after year. Press play to watch how the pattern evolved from 2002 to 2025.</p>
-  <div class="chart-wrap"><div id="cSeason"></div></div>
+  <div class="chart-wrap"><iframe src="visualizations/monthly.html" title="Drug offense ratio map"></iframe></div>
   <div class="finding">❄️ The summer dominance has barely shifted over 20+ years. Winter months have grown in absolute numbers, but their <strong>share</strong> of annual visitors remains almost unchanged — Iceland is not yet a true year-round destination despite the marketing.</div>
 </section>
 </div>
@@ -146,7 +146,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">04 — Where They Come From</div>
   <h2>A surprisingly concentrated<br>visitor base</h2>
   <p class="lead">The USA alone sent nearly 700,000 tourists in peak year 2018 — more than the next two countries combined. But the USA's dominance is gradually declining as Iceland diversifies its visitor base. Poland, Spain, and France have all grown faster proportionally since 2012.</p>
-  <div class="chart-wrap"><div id="cOrigins"></div></div>
+  <div class="chart-wrap"><iframe src="images/origins.png" title="Drug offense ratio map"></iframe></div>
   <div class="finding">🌍 The USA's share of total visitors peaked around 2008–2010 and has been declining steadily since. Iceland is becoming less dependent on a single market — but the top 3 countries still account for over 50% of all visitors.</div>
 </section>
 </div>
@@ -157,7 +157,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">05 — The Icelandic Króna</div>
   <h2>Did a weak currency<br>fuel the boom?</h2>
   <p class="lead">The ISK collapsed after the 2008 financial crisis, making Iceland dramatically cheaper for foreign visitors. As the króna weakened, tourist numbers climbed. When it strengthened again post-2016, growth slowed — suggesting currency played a real role.</p>
-  <div class="chart-wrap"><div id="cISK"></div></div>
+  <div class="chart-wrap"><iframe src="images/isk.png" title="Drug offense ratio map"></iframe></div>
   <div class="finding">💱 The inverse relationship is striking: as the ISK weakened after 2008, tourism took off from 2011. As the króna recovered post-2016, visitor growth plateaued. Correlation is not causation — airline expansion and social media also played roles — but the timing is hard to ignore.</div>
 </section>
 </div>
@@ -168,7 +168,7 @@ h2{font-family:'Fraunces',serif;font-size:clamp(2rem,3.8vw,2.9rem);font-weight:7
   <div class="stag">06 — Volcanoes & Global Interest</div>
   <h2>Disaster as a<br>marketing tool?</h2>
   <p class="lead">Google search interest for "flights to iceland" spikes around every major volcanic eruption. The 2010 Eyjafjallajökull eruption hit a perfect score of 100 in Google Trends — and the tourism boom followed exactly one year later. Click any button to zoom into that eruption window.</p>
-  <div class="chart-wrap"><div id="cVolcano"></div></div>
+  <div class="chart-wrap"><iframe src="visualizations/volcano.html" title="Drug offense ratio map"></iframe></div>
   <div class="volc-list">
     <div class="volc"><div class="volc-year">2010</div><div class="volc-body"><strong>Eyjafjallajökull ★</strong><span>April eruption grounded 100,000+ flights across Europe. Google search interest hit 100 — the all-time peak. Tourism began accelerating the following year, suggesting a ~12-month lag between viral moment and actual bookings.</span></div></div>
     <div class="volc"><div class="volc-year">2014–15</div><div class="volc-body"><strong>Holuhraun / Bárðarbunga</strong><span>Largest eruption in Iceland in 200 years. No flight disruption — search bump was smaller, consistent with the idea that disruption drives awareness more than eruption size alone.</span></div></div>
@@ -212,81 +212,6 @@ const cfg = {displayModeBar:false,responsive:true};
 const L = (extra={}) => ({paper_bgcolor:C.white,plot_bgcolor:C.white,font:{family:'DM Sans,sans-serif',color:C.gray},margin:{t:30,r:30,b:55,l:75},xaxis:{gridcolor:'rgba(0,0,0,0.05)',zerolinecolor:'transparent',tickfont:{color:C.gray}},yaxis:{gridcolor:'rgba(0,0,0,0.06)',zerolinecolor:'transparent',tickfont:{color:C.gray}},...extra});
 const LB = (extra={}) => ({...L(extra),paper_bgcolor:C.bg,plot_bgcolor:C.bg});
 
-
-// ── 3. SEASONALITY (animated) ────────────────────────────────────────────
-{
-  const frames = SEASON_FRAMES.map(f => ({
-    name: String(f.year),
-    data: [
-      {x:SEASON_MONTHS, y:f.rest,   type:'bar', name:'Rest of year',     marker:{color:'#4A90A4'}, hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-      {x:SEASON_MONTHS, y:f.summer, type:'bar', name:'Summer (Jun–Aug)', marker:{color:C.teal},    hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-    ],
-    layout:{title:{text:`Monthly Visitors by Season — ${f.year}`}}
-  }));
-
-  const initFrame = SEASON_FRAMES[0];
-  Plotly.newPlot('cSeason',[
-    {x:SEASON_MONTHS, y:initFrame.rest,   type:'bar', name:'Rest of year',     marker:{color:'#4A90A4'}, hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-    {x:SEASON_MONTHS, y:initFrame.summer, type:'bar', name:'Summer (Jun–Aug)', marker:{color:C.teal},    hovertemplate:'<b>%{x}</b><br>%{y:,.0f} visitors<extra></extra>'},
-  ], {
-    paper_bgcolor:C.white, plot_bgcolor:C.white,
-    font:{family:'DM Sans,sans-serif',color:C.gray},
-    title:{text:`Monthly Visitors by Season — ${initFrame.year}`, font:{color:C.dark,size:13}},
-    barmode:'stack',
-    height:460,
-    margin:{t:60,r:30,b:130,l:80},
-    yaxis:{tickformat:'.2s', range:[0,450000], title:{text:'Visitors',font:{color:C.gray}}, gridcolor:'rgba(0,0,0,0.05)', tickfont:{color:C.gray}, zerolinecolor:'transparent'},
-    xaxis:{title:{text:'Month',font:{color:C.gray}}, gridcolor:'rgba(0,0,0,0.05)', tickfont:{color:C.gray}},
-    legend:{orientation:'h', y:1.08, x:0, font:{color:C.gray}},
-    updatemenus:[{
-      type:'buttons', showactive:false,
-      x:0, y:-0.2, xanchor:'left',
-      bgcolor:C.dark, bordercolor:C.teal,
-      font:{color:'white', size:12},
-      buttons:[
-        {label:'▶  Play', method:'animate', args:[null, {frame:{duration:600,redraw:true}, fromcurrent:true, transition:{duration:200}}]},
-        {label:'⏸', method:'animate', args:[[null], {frame:{duration:0,redraw:false}, mode:'immediate'}]}
-      ]
-    }],
-    sliders:[{
-      active:0,
-      currentvalue:{prefix:'Year: ', font:{color:C.gray, size:13}},
-      pad:{t:50, b:10},
-      bgcolor:'#F4F7F9', bordercolor:C.lgray,
-      font:{color:C.gray, size:10},
-      steps: SEASON_FRAMES.map(f => ({
-        args:[[String(f.year)], {frame:{duration:400,redraw:true}, mode:'immediate'}],
-        label:String(f.year), method:'animate'
-      }))
-    }]
-  }, {displayModeBar:false, responsive:true});
-
-  Plotly.addFrames('cSeason', frames);
-}
-
-// ── 4. ORIGINS ───────────────────────────────────────────────────────────
-Plotly.newPlot('cOrigins',[
-  {x:TOP_VISITORS,y:TOP_COUNTRIES,type:'bar',orientation:'h',marker:{color:C.teal,opacity:.88},name:'Visitors 2018',hovertemplate:'<b>%{y}</b><br>%{x:,.0f} visitors<extra></extra>',xaxis:'x',yaxis:'y'},
-  {x:CS_YEARS,y:CS_USA,type:'scatter',mode:'lines+markers',name:'USA',line:{color:C.teal,width:2.5},marker:{size:5},hovertemplate:'<b>USA %{x}</b><br>%{y:.1f}%<extra></extra>',xaxis:'x2',yaxis:'y2'},
-  {x:CS_YEARS,y:CS_UK,type:'scatter',mode:'lines+markers',name:'UK',line:{color:C.orange,width:2.5},marker:{size:5},hovertemplate:'<b>UK %{x}</b><br>%{y:.1f}%<extra></extra>',xaxis:'x2',yaxis:'y2'},
-  {x:CS_YEARS,y:CS_DE,type:'scatter',mode:'lines+markers',name:'Germany',line:{color:C.purple,width:2.5},marker:{size:5},hovertemplate:'<b>Germany %{x}</b><br>%{y:.1f}%<extra></extra>',xaxis:'x2',yaxis:'y2'},
-],{paper_bgcolor:C.bg,plot_bgcolor:C.bg,font:{family:'DM Sans,sans-serif',color:C.gray},grid:{rows:1,columns:2,pattern:'independent'},height:420,margin:{t:50,r:40,b:60,l:110},xaxis:{gridcolor:'rgba(0,0,0,0.05)',tickformat:'.2s',tickfont:{color:C.gray},domain:[0,0.47],title:{text:'Visitors',font:{color:C.gray}}},yaxis:{gridcolor:'transparent',tickfont:{color:C.gray},autorange:'reversed'},xaxis2:{gridcolor:'rgba(0,0,0,0.05)',tickfont:{color:C.gray},domain:[0.53,1],title:{text:'Year',font:{color:C.gray}}},yaxis2:{gridcolor:'rgba(0,0,0,0.05)',tickfont:{color:C.gray},title:{text:'% of annual visitors',font:{color:C.gray}},ticksuffix:'%'},annotations:[{text:'Top 10 Countries — Peak Year 2018',x:0.23,y:1.07,xref:'paper',yref:'paper',showarrow:false,font:{size:12,color:C.dark}},{text:'USA / UK / Germany Share Over Time',x:0.76,y:1.07,xref:'paper',yref:'paper',showarrow:false,font:{size:12,color:C.dark}}],legend:{x:0.53,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{color:C.gray}},showlegend:true},cfg);
-
-// ── 5. ISK ───────────────────────────────────────────────────────────────
-Plotly.newPlot('cISK',[
-  {x:ANNUAL_YEARS,y:ANNUAL_VISITORS,type:'scatter',mode:'lines+markers',name:'Annual Visitors',line:{color:C.teal,width:2.5,shape:'spline'},marker:{color:C.teal,size:7},fill:'tozeroy',fillcolor:'rgba(0,180,160,0.08)',hovertemplate:'<b>%{x}</b><br>Visitors: %{y:,.0f}<extra></extra>',yaxis:'y'},
-  {x:ISK_YEARS,y:ISK_VALS,type:'scatter',mode:'lines+markers',name:'ISK Index (higher = weaker)',line:{color:C.orange,width:2.5,dash:'dot'},marker:{color:C.orange,size:6,symbol:'square'},hovertemplate:'<b>%{x}</b><br>ISK Index: %{y:.1f}<extra></extra>',yaxis:'y2'},
-],L({height:400,legend:{orientation:'h',y:1.08,x:0,font:{color:C.gray,size:11}},yaxis:{...L().yaxis,title:{text:'Annual Visitors',font:{color:C.teal,size:11}},tickformat:'.2s',tickfont:{color:C.teal}},yaxis2:{overlaying:'y',side:'right',title:{text:'ISK Index',font:{color:C.orange,size:11}},tickfont:{color:C.orange},gridcolor:'transparent',zerolinecolor:'transparent'},annotations:[{x:2008,y:472672,text:'2008 crisis<br>ISK collapses',showarrow:true,arrowhead:2,arrowcolor:C.orange,font:{color:C.orange,size:11},ax:60,ay:-55,yref:'y'},{x:2018,y:2315925,text:'Peak visitors',showarrow:true,arrowhead:2,arrowcolor:C.teal,font:{color:C.teal,size:11},ax:-65,ay:-35,yref:'y'}]}),cfg);
-
-// ── 6. VOLCANO ───────────────────────────────────────────────────────────
-const volcanos=[['2004-11-01','Grímsvötn (Nov 2004)','#E67E22','triangle-up',3,12],['2010-03-01','Eyjafjallajökull (Mar 2010)','#C0392B','triangle-up',2,6],['2010-04-01','Eyjafjallajökull (Apr 2010) ★','#C0392B','star',3,18],['2011-05-01','Grímsvötn (May 2011)','#E67E22','triangle-up',3,12],['2014-08-01','Holuhraun (Aug 2014)','#E67E22','triangle-up',3,12],['2021-03-01','Fagradalsfjall (Mar 2021)','#8E44AD','triangle-up',3,12],['2022-08-01','Meradalaeldar (Aug 2022)','#9B59B6','triangle-up',3,10],['2023-07-01','Litli-Hrútur (Jul 2023)','#2980B9','triangle-up',3,10],['2023-12-01','Sundhnúksgígur (Dec 2023)','#1ABC9C','triangle-up',2,6],['2024-01-01','Svartsengi (Jan 2024) ★','#16A085','star',2,14],['2024-02-01','Svartsengi (Feb 2024)','#16A085','triangle-up',1,4],['2024-03-01','Svartsengi (Mar 2024)','#16A085','triangle-up',1,4],['2024-05-01','Svartsengi (May 2024)','#16A085','triangle-up',1,4],['2024-08-01','Svartsengi (Aug 2024)','#16A085','triangle-up',1,4],['2024-11-01','Svartsengi (Nov 2024)','#16A085','triangle-up',1,4],['2025-04-01','Svartsengi (Apr 2025)','#16A085','triangle-up',1,4],['2025-07-01','Svartsengi (Jul 2025)','#16A085','triangle-up',1,4]];
-const vT=[];
-vT.push({x:MV_DATES,y:MV_VALS,type:'bar',name:'Monthly Visitors',marker:{color:'rgba(0,180,160,0.2)',line:{width:0}},hovertemplate:'<b>%{x|%b %Y}</b><br>Visitors: %{y:,.0f}<extra></extra>',yaxis:'y2'});
-vT.push({x:GT_DATES,y:GT_VALS,type:'scatter',mode:'lines',name:'Search: "flights to iceland"',line:{color:C.orange,width:2.5},hovertemplate:'<b>%{x|%b %Y}</b><br>Search interest: %{y}<extra></extra>',yaxis:'y'});
-const seen={};
-volcanos.forEach(([ds,name,color,symbol])=>{const sys=name.split('(')[0].trim().replace(' ★','');const showL=!seen[sys];seen[sys]=true;const gi=GT_DATES.indexOf(ds);const yval=gi>=0?GT_VALS[gi]:25;const mi=MV_DATES.indexOf(ds);const vc=mi>=0?MV_VALS[mi].toLocaleString():'N/A';vT.push({x:[ds],y:[yval],type:'scatter',mode:'markers',name:sys,legendgroup:sys,showlegend:showL,marker:{color,size:name.includes('★')?15:10,symbol,line:{color:'white',width:1.5}},hovertemplate:`<b>${name}</b><br>Search: ${yval}<br>Visitors: ${vc}<extra></extra>`,yaxis:'y'});});
-const zBtn=(label,ds,mb,ma)=>{const d=new Date(ds),x0=new Date(d),x1=new Date(d);x0.setMonth(x0.getMonth()-mb);x1.setMonth(x1.getMonth()+ma);return {label,method:'relayout',args:[{'xaxis.range':[x0.toISOString().slice(0,10),x1.toISOString().slice(0,10)],'xaxis.autorange':false}]}};
-Plotly.newPlot('cVolcano',vT,{paper_bgcolor:C.white,plot_bgcolor:C.white,font:{family:'DM Sans,sans-serif',color:C.gray},height:500,margin:{t:110,r:80,b:60,l:75},hovermode:'x unified',barmode:'overlay',updatemenus:[{type:'buttons',direction:'right',x:0,y:1.22,xanchor:'left',showactive:true,bgcolor:C.white,bordercolor:C.lgray,font:{size:10,color:C.dark},buttons:[{label:'📊 All',method:'relayout',args:[{'xaxis.autorange':true}]},zBtn('Grímsvötn 2004','2004-11-01',3,12),zBtn('Eyjafjallajökull ★','2010-04-01',3,18),zBtn('Grímsvötn 2011','2011-05-01',3,12),zBtn('Holuhraun','2014-08-01',3,12),zBtn('Fagradalsfjall','2021-03-01',3,12),zBtn('Meradalaeldar','2022-08-01',3,10),zBtn('Litli-Hrútur','2023-07-01',3,10),zBtn('Svartsengi ★','2024-01-01',2,14)]}],xaxis:{gridcolor:'rgba(0,0,0,0.05)',tickfont:{color:C.gray},rangeslider:{visible:true,bgcolor:C.bg}},yaxis:{title:{text:'Search Interest (0–100)',font:{color:C.orange,size:11}},tickfont:{color:C.orange},gridcolor:'rgba(0,0,0,0.05)',range:[0,120]},yaxis2:{overlaying:'y',side:'right',title:{text:'Monthly Visitors',font:{color:C.teal,size:11}},tickfont:{color:C.teal},tickformat:'.2s',gridcolor:'transparent',zerolinecolor:'transparent'},legend:{x:1.08,y:1,bgcolor:'rgba(0,0,0,0)',font:{color:C.gray,size:11},title:{text:'Volcano:',font:{color:C.gray}}},shapes:[{type:'rect',x0:'2020-03-01',x1:'2021-06-01',y0:0,y1:1,yref:'paper',fillcolor:'rgba(217,95,95,0.06)',line:{width:0}}],annotations:[{x:'2020-09-01',y:1.02,yref:'paper',text:'COVID',showarrow:false,font:{color:C.red,size:10}}]},cfg);
 
 // SCROLL ANIMATION
 const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');}),{threshold:0.1});
